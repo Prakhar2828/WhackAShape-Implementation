@@ -1,1 +1,151 @@
+package game;
 
+import bag.Node;
+import student.TestableRandom;
+
+// -------------------------------------------------------------------------
+/**
+ * The SimpleLinkedBag class represents a bag data structure implemented using a
+ * singly linked list.
+ * 
+ * @param <T>
+ * @author Prakhar Pandey
+ * @version 24-Sep-2023
+ */
+public class SimpleLinkedBag<T>
+{
+    private Node<T> firstNode;
+    private int numberOfEntries;
+
+    /**
+     * Creates a SimpleLinkedBag object.
+     */
+    public SimpleLinkedBag()
+    {
+        firstNode = null;
+        numberOfEntries = 0;
+    }
+
+
+    /**
+     * Gets the current size of the bag.
+     * 
+     * @return The number of elements currently stored in the bag.
+     */
+    public int getCurrentSize()
+    {
+        return numberOfEntries;
+    }
+
+
+    /**
+     * Checks if the bag is empty.
+     * 
+     * @return true if the bag is empty, false if it contains one or more
+     *             elements.
+     */
+    public boolean isEmpty()
+    {
+        return numberOfEntries == 0;
+    }
+
+
+    /**
+     * Adds a new entry to the bag.
+     * 
+     * @param anEntry
+     *            The entry to be added to the bag.
+     * @return true if the addition is successful, false if the entry is null.
+     */
+    public boolean add(T anEntry)
+    {
+        if (anEntry == null)
+        {
+            return false;
+        }
+
+        Node<T> newNode = new Node<>(anEntry);
+        newNode.setNext(firstNode);
+        firstNode = newNode;
+        numberOfEntries++;
+        return true;
+    }
+
+
+    /**
+     * Selects and returns a random entry from the bag.
+     * 
+     * @return A randomly selected entry from the bag, or null if the bag is
+     *             empty.
+     */
+    public T pick()
+    {
+        if (isEmpty())
+        {
+            return null;
+        }
+        TestableRandom generator = new TestableRandom();
+        int index = generator.nextInt(numberOfEntries);
+
+        Node<T> currentNode = firstNode;
+        for (int i = 0; i < index; i++)
+        {
+            currentNode = currentNode.getNext();
+        }
+
+        return currentNode.getData();
+    }
+
+
+    /**
+     * Searches for a specific entry in the bag and returns a reference to the
+     * Node containing that entry, or null if the entry is not found.
+     *
+     * @param anEntry
+     *            The entry to search for.
+     * @return A reference to the Node containing the specified entry, or null
+     *             if not found.
+     */
+    private Node<T> getReferenceTo(T anEntry)
+    {
+        boolean found = false;
+        Node<T> currentNode = firstNode;
+
+        while (!found && currentNode != null)
+        {
+            if (anEntry.equals(currentNode.getData()))
+            {
+                found = true;
+            }
+            else
+            {
+                currentNode = currentNode.getNext();
+            }
+        }
+        return currentNode;
+    }
+
+
+    /**
+     * Removes a specific entry from the bag.
+     * 
+     * @param anEntry
+     *            The entry to be removed.
+     * @return true if the removal is successful, false if the entry is not
+     *             found.
+     */
+    public boolean remove(T anEntry)
+    {
+        Node<T> node = getReferenceTo(anEntry);
+
+        if (node == null)
+        {
+            return false;
+        }
+
+        node.setData(firstNode.getData());
+        firstNode = firstNode.getNext();
+        numberOfEntries--;
+        return true;
+    }
+}

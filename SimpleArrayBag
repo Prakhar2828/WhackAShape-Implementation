@@ -1,1 +1,135 @@
+package game;
+
+import student.TestableRandom;
+
+/**
+ * The SimpleArrayBag class represents a bag data structure implemented using an
+ * array.
+ * 
+ * @param <T>
+ * @author Prakhar Pandey
+ * @version 23-Sep-2023
+ */
+public class SimpleArrayBag<T>
+{
+    private T[] bag;
+    private static final int MAX = 18;
+    private int numberOfEntries;
+
+    /**
+     * Create a new SimpleArrayBag object.
+     */
+    public SimpleArrayBag()
+    {
+        @SuppressWarnings("unchecked")
+        T[] tempbag = (T[])new Object[MAX];
+        bag = tempbag;
+        numberOfEntries = 0;
+    }
+
+
+    /**
+     * Gets the current size of the bag.
+     *
+     * @return The number of items currently in the bag.
+     */
+    public int getCurrentSize()
+    {
+        return numberOfEntries;
+    }
+
+
+    /**
+     * Checks if the bag is empty.
+     *
+     * @return true if the bag is empty, false if it contains one or more
+     *             elements.
+     */
+    public boolean isEmpty()
+    {
+        return numberOfEntries == 0;
+    }
+
+
+    /**
+     * Adds a new entry to the bag.
+     *
+     * @param anEntry
+     *            The entry to be added to the bag.
+     * @return true if the addition is successful, false if the entry is null or
+     *             the bag is full.
+     */
+    public boolean add(T anEntry)
+    {
+        if (numberOfEntries < MAX && anEntry != null)
+        {
+            bag[numberOfEntries] = anEntry;
+            numberOfEntries++;
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Selects and returns a random entry from the bag.
+     *
+     * @return A randomly selected entry from the bag, or null if the bag is
+     *             empty.
+     */
+    public T pick()
+    {
+        if (isEmpty())
+        {
+            return null;
+        }
+        TestableRandom generator = new TestableRandom();
+        int index = generator.nextInt(numberOfEntries);
+        return bag[index];
+    }
+
+
+    /**
+     * Private helper method to find the index of a specific entry in the bag.
+     *
+     * @param anEntry
+     *            The entry to search for in the bag.
+     * @return The index of the first occurrence of the specified entry in the
+     *             bag, or -1 if not found.
+     */
+    private int getIndexOf(T anEntry)
+    {
+        for (int index = 0; index < numberOfEntries; index++)
+        {
+            if (bag[index].equals(anEntry))
+            {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+
+    /**
+     * Removes the first occurrence of a specific entry from the bag.
+     *
+     * @param anEntry
+     *            The entry to be removed from the bag.
+     * @return true if the entry was removed successfully, false if the entry is
+     *             not found.
+     */
+    public boolean remove(T anEntry)
+    {
+        int indexToRemove = getIndexOf(anEntry);
+
+        if (indexToRemove == -1)
+        {
+            return false;
+        }
+        bag[indexToRemove] = bag[numberOfEntries - 1];
+        bag[numberOfEntries - 1] = null;
+        numberOfEntries--;
+        return true;
+    }
+}
 

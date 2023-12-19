@@ -1,0 +1,224 @@
+// Virginia Tech Honor Code Pledge:
+//
+// As a Hokie, I will conduct myself with honor and integrity at all times.
+// I will not lie, cheat, or steal, nor will I accept the actions of those who
+// do.
+// -- Prakhar Pandey (prakhar28)
+
+package game;
+
+import cs2.*;
+import java.awt.Color;
+import student.TestableRandom;
+import cs2.Button;
+
+// -------------------------------------------------------------------------
+/**
+ * The WhackAShape class represents a simple game where the player must click on
+ * randomly generated shapes on a graphical window.
+ * 
+ * @author Prakhar Pandey
+ * @version 24-Sep-2023
+ */
+public class WhackAShape
+{
+    // ~ Fields ................................................................
+
+    private static final String[] STRINGS =
+        { "red circle", "blue circle", "red square", "blue square" };
+    private SimpleArrayBag<Shape> bag;
+    private Window window;
+    private Button quitButton;
+
+    // ----------------------------------------------------------
+    /**
+     * Create a new WhackAShape object.
+     */
+    public WhackAShape()
+    {
+        bag = new SimpleArrayBag<Shape>();
+        window = new Window();
+        quitButton = new Button("Quit");
+        quitButton.onClick(this, "clickedQuit");
+        window.addButton(quitButton, WindowSide.EAST);
+        TestableRandom random = new TestableRandom();
+        int sizeOfBag = random.nextInt(9) + 6;
+        for (int i =0; i < sizeOfBag; i++)
+        {
+            String shapeRandom = STRINGS[random.nextInt(STRINGS.length)];
+            Shape shape = buildShape(shapeRandom);
+            bag.add(shape);
+            Shape firstShape = bag.pick();
+            window.addShape(firstShape);
+        }
+    }
+
+
+    /**
+     * Creates a new WhackAShape object with custom input shapes. Shapes are
+     * generated from the provided input strings and added to the game bag. The
+     * first shape is displayed on the window.
+     * 
+     * @param inputs
+     *            An array of strings representing shapes to be added to the
+     *            game.
+     */
+    public WhackAShape(String[] inputs)
+    {
+        bag = new SimpleArrayBag<Shape>();
+        window = new Window();
+        quitButton = new Button("Quit");
+        window.addButton(quitButton, WindowSide.EAST);
+
+        for (String input : inputs)
+        {
+            try
+            {
+                Shape shape = buildShape(input);
+                bag.add(shape);
+            }
+            catch (IllegalArgumentException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        Shape firstShape = bag.pick();
+        if (firstShape != null)
+        {
+            window.addShape(firstShape);
+        }
+    }
+
+
+    /**
+     * Gets the game window.
+     * 
+     * @return The Window object representing the game window.
+     */
+    public Window getWindow()
+    {
+        return window;
+    }
+
+
+    /**
+     * Gets the bag of shapes in the game.
+     * 
+     * @return The SimpleArrayBag containing the shapes.
+     */
+    public SimpleArrayBag<Shape> getBag()
+    {
+        return bag;
+    }
+
+
+    /**
+     * Handles the "Quit" button click event. Exits the game by calling
+     * System.exit(0).
+     * 
+     * @param button
+     *            The Button object representing the "Quit" button.
+     */
+    public void clickedQuit(Button button)
+    {
+        System.exit(0);
+    }
+
+
+    /**
+     * Handles a shape being clicked by the player. Removes the clicked shape
+     * from the window and the game bag. Displays the next shape or a "You Win!"
+     * message if the game is over.
+     * 
+     * @param shape
+     *            The Shape object that was clicked.
+     */
+    public void clickedShape(Shape shape)
+    {
+        window.removeShape(shape);
+
+        boolean removed = bag.remove(shape);
+
+        if (!removed)
+        {
+            System.err.println("Clicked shape not found in the bag.");
+        }
+
+        if (!bag.isEmpty())
+        {
+            Shape nextShape = bag.pick();
+
+            if (nextShape != null)
+            {
+                window.addShape(nextShape);
+            }
+            else
+            {
+                int centerX = window.getGraphPanelWidth() / 2;
+                int centerY = window.getGraphPanelHeight() / 2;
+                TextShape winMessage = new TextShape(centerX, centerY, 
+                    "You Win!");
+                window.addShape(winMessage);
+            }
+        }
+    }
+
+
+    /**
+     * Creates a new shape based on the provided input string.
+     *
+     * @param input
+     *            The input string specifying the shape's attributes (e.g., "red
+     *            circle").
+     * @return A new Shape object representing the specified shape.
+     * @throws IllegalArgumentException
+     *             if the input string is invalid or missing required
+     *             information.
+     */
+    private Shape buildShape(String input)
+    {
+        TestableRandom random = new TestableRandom();
+        TestableRandom.setNextInts(100, 200);
+        int size = random.nextInt();
+
+        int maxX = window.getGraphPanelWidth() - size;
+        int maxY = window.getGraphPanelHeight() - size;
+        TestableRandom.setNextInts(0, maxX + 1);
+        int x = random.nextInt();
+        TestableRandom.setNextInts(0, maxY + 1);
+        int y = random.nextInt();
+
+        Color color = Color.BLACK;
+        if (input.contains("red"))
+        {
+            color = Color.RED;
+        }
+        else if (input.contains("blue"))
+        {
+            color = Color.BLUE;
+        }
+        else
+        {
+            throw new IllegalArgumentException(
+                "Invalid color specified in " + "input: " + input);
+        }
+        if (input.contains("circle"))
+        {
+            CircleShape circle = new CircleShape(x, y, size, color);
+            circle.onClick(this, "clickedShape");
+            return circle;
+        }
+        else if (input.contains("square"))
+        {
+            SquareShape square = new SquareShape(x, y, size, color);
+            square.onClick(this, "clickedShape");
+            return square;
+        }
+        else
+        {
+            throw new IllegalArgumentException(
+                "Invalid shape specified in " + "input: " + input);
+        }
+    }
+}

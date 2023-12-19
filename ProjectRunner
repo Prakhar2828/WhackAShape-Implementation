@@ -1,0 +1,29 @@
+package game;
+
+/**
+ * The ProjectRunner class serves as the entry point for running the
+ * Whack-A-Shape game program.
+ * 
+ * @author Prakhar Pandey
+ * @version 25-Sep-2023
+ */
+public class ProjectRunner
+{
+    /**
+     * The main method is called when you run the program.
+     * 
+     * @param args
+     *            The command-line arguments passed to the program.
+     */
+    public static void main(String[] args)
+    {
+        if (args.length > 0)
+        {
+            WhackAShape game = new WhackAShape(args);
+        }
+        else
+        {
+            WhackAShape game2 = new WhackAShape();
+        }
+    }
+}

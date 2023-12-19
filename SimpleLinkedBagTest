@@ -1,0 +1,151 @@
+package game;
+
+import student.TestableRandom;
+
+// -------------------------------------------------------------------------
+/**
+ * The SimpleLinkedBag class represents a bag data structure implemented using 
+ * a singly linked list.
+ * 
+ * @author Prakhar Pandey
+ * @version 25-Sep-2023
+ */
+public class SimpleLinkedBagTest
+    extends student.TestCase
+{
+    // ~ Fields ................................................................
+
+    private SimpleLinkedBag<Integer> bag;
+
+    // ~ Constructors ..........................................................
+
+    // ~Public Methods ........................................................
+
+    /**
+     * Sets up the initial test conditions.
+     */
+    public void setUp()
+    {
+        bag = new SimpleLinkedBag<>();
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * tests the getCurrentSize() method.
+     */
+    public void testGetCurrentSize()
+    {
+        assertEquals(0, bag.getCurrentSize());
+
+        bag.add(1);
+        bag.add(2);
+        bag.add(3);
+        assertEquals(3, bag.getCurrentSize());
+    }
+
+
+    /**
+     * tests the isEmpty() method.
+     */
+    public void testIsEmpty()
+    {
+        assertTrue(bag.isEmpty());
+
+        bag.add(1);
+        bag.add(2);
+        bag.add(3);
+        bag.add(4);
+        assertFalse(bag.isEmpty());
+        assertEquals(4, bag.getCurrentSize());
+    }
+
+
+    /**
+     * tests the add() method.
+     */
+    public void testAdd()
+    {
+        assertTrue(bag.add(1));
+        assertEquals(1, bag.getCurrentSize());
+
+        assertTrue(bag.add(2));
+        assertEquals(2, bag.getCurrentSize());
+
+        assertFalse(bag.add(null));
+        assertEquals(2, bag.getCurrentSize());
+
+        assertTrue(bag.add(3));
+        assertTrue(bag.add(4));
+        assertEquals(4, bag.getCurrentSize());
+
+        assertTrue(bag.add(5));
+        assertTrue(bag.add(6));
+        assertTrue(bag.add(7));
+        assertEquals(7, bag.getCurrentSize());
+    }
+
+
+    /**
+     * tests the pick() method.
+     */
+    public void testPick()
+    {
+        assertTrue(bag.isEmpty());
+        assertNull(bag.pick());
+
+        bag.add(1);
+        bag.add(2);
+        bag.add(3);
+        bag.add(4);
+        assertFalse(bag.isEmpty());
+
+        TestableRandom.setNextInts(1);
+
+        int pickedItem = bag.pick();
+        assertEquals(3, pickedItem);
+
+        TestableRandom.setNextInts(0);
+
+        int pickedItem2 = bag.pick();
+        assertEquals(pickedItem2, 4);
+
+        TestableRandom.setNextInts(2);
+
+        int pickedItem3 = bag.pick();
+        assertEquals(2, pickedItem3);
+
+        TestableRandom.setNextInts(3);
+
+        int pickedItem4 = bag.pick();
+        assertEquals(1, pickedItem4);
+    }
+
+
+    /**
+     * tests the remove() method.
+     */
+    public void testRemove()
+    {
+        assertFalse(bag.remove(2));
+
+        bag.add(1);
+        bag.add(2);
+        assertEquals(2, bag.getCurrentSize());
+        bag.add(3);
+        assertEquals(3, bag.getCurrentSize());
+
+        assertFalse(bag.remove(4));
+
+        assertTrue(bag.remove(2));
+        assertEquals(2, bag.getCurrentSize());
+
+        assertTrue(bag.remove(1));
+        assertEquals(1, bag.getCurrentSize());
+
+        assertTrue(bag.remove(3));
+        assertEquals(0, bag.getCurrentSize());
+
+        assertFalse(bag.remove(1));
+    }
+}
